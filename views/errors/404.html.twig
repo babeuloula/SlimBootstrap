@@ -1,0 +1,8 @@
+{% extends 'base/base.html.twig' %}
+
+{% block titre %}Erreur 404 - {{ parent('titre') }}{% endblock %}
+
+{% block contenu %}
+    <h1>Erreur 404</h1>
+    <p>La page que vous demandez n'existe pas ou plus.</p>
+{% endblock %}

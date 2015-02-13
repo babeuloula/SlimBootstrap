@@ -1,0 +1,7 @@
+{% extends 'base/base.html.twig' %}
+
+{% block titre %}Hello {{ name }} - {{ parent('titre') }}{% endblock %}
+
+{% block contenu %}
+    <h1>Hello {{ name }}</h1>
+{% endblock %}

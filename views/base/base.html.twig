@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+
+<html lang="fr">
+
+    <head>
+
+        <title>{% block titre %}Slim Framework{% endblock %}</title>
+
+        {% block css %}
+        {% endblock %}
+
+        <META CHARSET="UTF-8">
+        <META HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="FR">
+        <META NAME="VIEWPORT" CONTENT="WIDTH=DEVICE-WIDTH, INITIAL-SCALE=1.0">
+        <META NAME="KEYWORDS" CONTENT="{% block keywords %}{% endblock %}">
+        <META NAME="DESCRIPTION" CONTENT="{% block description %}{% endblock %}">
+        <META NAME="AUTHOR" CONTENT="Com Euro-Concept, comeuroconcept.fr création de site internet Lyon L'Arbresle">
+        <META NAME="COPYRIGHT" CONTENT="Com Euro-Concept, comeuroconcept.fr création de site internet Lyon L'Arbresle">
+        <META NAME="REVISIT-AFTER" CONTENT="7 DAYS">
+        <META NAME="ROBOTS" CONTENT="ALL">
+
+    </head>
+
+    <body>
+
+        <div id="container">
+            {% block header %}
+            {% endblock %}
+
+            <div id="content">
+                {% block contenu %}{% endblock %}
+            </div>
+
+            {% block footer %}
+            {% endblock %}
+
+            {% block javascript %}
+            {% endblock %}
+        </div>
+
+    </body>
+
+</html>
