@@ -48,7 +48,6 @@
         'debug' => true,
     );
     $view->parserExtensions = array(
-        new \Slim\Views\TwigExtension(),
         new Core\TwigExtension(),
     );
     $twig = $app->view()->getEnvironment();
