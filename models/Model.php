@@ -8,6 +8,7 @@
         public $db;
         public $pdo;
         public $table = false;
+        public $lastId;
 
         public function __construct($table = false, $sqlite = false) {
             if($this->table === false) {
@@ -27,12 +28,12 @@
                 if($sqlite) {
                     $this->db = 'sqlite';
 
-                    $dir = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'data.sqlite';
+                    $dir = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'bdd.sqlite';
 
                     $pdo = new PDO('sqlite:' . $dir);
                     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 } else {
-                    if ($_SERVER['SERVER_ADDR'] == "192.168.1.200") {
+                    if (DEBUG) {
                         $config = Config::$database['local'];
                         $this->db = 'local';
                     } else {
@@ -48,7 +49,7 @@
                 Model::$connections[$this->db] = $pdo;
                 $this->pdo = $pdo;
             } catch (PDOException $e) {
-                if(Config::$debug === 1) {
+                if(Config::$debug === true) {
                     die($e->getMessage());
                 } else {
                     die('Une erreur est survenue lors de la connexion &agrave; la base de donn&eacute;es');
@@ -64,7 +65,20 @@
             return new Collection($prepare->fetchAll(PDO::FETCH_ASSOC));
         }
 
+        public function insert($query, $datas = array()) {
+            $prepare = $this->pdo->prepare($query);
+            $query = $prepare->execute($datas);
+            $this->lastId = $this->pdo->lastInsertId();
+
+            return $query;
+        }
+
         public function update($query, $datas = array()) {
+            $prepare = $this->pdo->prepare($query);
+            return $prepare->execute($datas);
+        }
+
+        public function delete($query, $datas = array()) {
             $prepare = $this->pdo->prepare($query);
             return $prepare->execute($datas);
         }

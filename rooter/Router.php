@@ -31,4 +31,16 @@
         public function post($url, $action) {
             return $this->call('post', $url, $action);
         }
+
+        public function insert($url, $action) {
+            return $this->call('post', $url, $action);
+        }
+
+        public function update($url, $action) {
+            return $this->call('post', $url, $action);
+        }
+
+        public function delete($url, $action) {
+            return $this->call('get', $url, $action);
+        }
     }

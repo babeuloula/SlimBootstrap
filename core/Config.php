@@ -4,19 +4,19 @@
 
     class Config {
 
-        static $debug = 1;
+        static $debug = DEBUG;
 
         static $database = array(
             'local' => array(
-                'host' => '',
-                'database' => '',
-                'user' => '',
+                'host'     => 'localhost',
+                'database' => 'database',
+                'user'     => 'root',
                 'password' => ''
             ),
             'dev' => array(
-                'host' => '',
-                'database' => '',
-                'user' => '',
+                'host'     => 'localhost',
+                'database' => 'database',
+                'user'     => 'root',
                 'password' => ''
             )
         );

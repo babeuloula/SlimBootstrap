@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+
+<html lang="fr">
+
+    <head>
+
+        <title>{% block title %}SlimBootstrap{% endblock %}</title>
+
+        <link title="defaut" type="text/css" rel="stylesheet" href="{{ asset('css/style.css') }}" media="screen">
+
+        <META CHARSET="UTF-8">
+        <META HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="FR">
+        <META NAME="VIEWPORT" CONTENT="WIDTH=DEVICE-WIDTH, INITIAL-SCALE=1.0">
+
+    </head>
+
+    <body>
+
+        {% block content %}
+        <form method="post" action="{{ urlFor('hello') }}">
+            <label>Your name :</label><br>
+            <input type="text" name="name" required="required"><br>
+            <input type="submit" value="Say my name !">
+        </form>
+        {% endblock %}
+
+    </body>
+
+</html>
