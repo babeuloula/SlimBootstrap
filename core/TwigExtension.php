@@ -2,6 +2,8 @@
 
 
     namespace Core;
+    
+    use Cocur\Slugify\Slugify;
 
     class TwigExtension extends \Slim\Views\TwigExtension {
 
