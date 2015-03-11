@@ -18,9 +18,17 @@
                 $controller_name = $action[0] . 'Controller';
                 $method = $action[1];
 
-                $controller = new $controller_name($app);
+                if(class_exists($controller_name)) {
+                    $controller = new $controller_name($app);
+                } else {
+                    die('Le controller <strong>' . $controller_name . '</strong> n\'existe pas dans le dossier <strong>/controller/' . $controller_name . '</strong>.');
+                }
 
-                call_user_func_array(array($controller, $method), func_get_args());
+                try {
+                    call_user_func_array(array($controller, $method), func_get_args());
+                } catch(\Exception $e) {
+                    die('La fonction <strong>' . $method . '</strong> n\'existe pas dans le controller <strong>' . $controller_name . '</strong>.');
+                }
             });
         }
 
