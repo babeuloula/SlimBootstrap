@@ -13,7 +13,11 @@
         }
 
         public function loadModel($name, $table = false) {
-            require_once ROOT . DS . "models" . DS . $name . ".php";
+            if(file_exists(ROOT . DS . "models" . DS . $name . ".php")) {
+                require_once ROOT . DS . "models" . DS . $name . ".php";
+            } else {
+                die('Le model <strong>' . $name . '</strong> n\'existe pas dans le dossier <strong>/models/' . $name . '</strong>.');
+            }
 
             if(!isset($this->$name)) {
                 $this->$name = new $name($table);
