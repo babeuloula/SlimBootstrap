@@ -28,7 +28,7 @@
                 if($sqlite) {
                     $this->db = 'sqlite';
 
-                    $dir = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'bdd.sqlite';
+                    $dir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bdd.sqlite';
 
                     $pdo = new PDO('sqlite:' . $dir);
                     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
