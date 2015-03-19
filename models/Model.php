@@ -57,7 +57,6 @@
             }
         }
 
-
         public function query($query, $datas = array()) {
             $prepare = $this->pdo->prepare($query);
             $prepare->execute($datas);
@@ -142,5 +141,32 @@
         public function findLast($query) {
             $last = $this->find($query);
             return $last->last();
+        }
+
+        public function rowCount($conditions = false) {
+            $sql = "SELECT COUNT(id_".$this->table.") AS total FROM ".$this->table;
+
+            if($conditions) {
+                $sql.= " WHERE ";
+
+                if(!is_array($conditions)) {
+                    $sql.= $conditions;
+                } else {
+                    $where = array();
+                    foreach($conditions as $key => $value) {
+                        if(!is_numeric($value)) {
+                            $value = $this->pdo->quote($value);
+                        }
+
+                        array_push($where, $key . " = " . $value);
+                    }
+
+                    $sql.= implode(' AND ', $where);
+                }
+            }
+
+            $rowCount = $this->query($sql);
+
+            return intval($rowCount[0]['total']);
         }
     }
