@@ -69,11 +69,12 @@
     // Gestion des erreurs
     $app->notFound(function() use ($app) {
         // $app->render('errors/404.html.twig');
-        die('404 Error !');
+        die('Error 404!');
     });
     $app->error(function() use ($app) {
         $app->response->status(500);
         // $app->render('errors/500.html.twig');
+        die('Error 500!');
     });
 
 

@@ -2,7 +2,7 @@
 
 
     namespace Core;
-    
+
     use Cocur\Slugify\Slugify;
 
     class TwigExtension extends \Slim\Views\TwigExtension {
@@ -12,6 +12,12 @@
 
             // Ajoutez vos fonctions ici
             array_push($functions, new \Twig_SimpleFunction('asset', array($this, 'asset')));
+            array_push($functions, new \Twig_SimpleFunction('json_decode', array($this, 'json_decode')));
+            array_push($functions, new \Twig_SimpleFunction('show_num', array($this, 'show_num')));
+            array_push($functions, new \Twig_SimpleFunction('date_fr', array($this, 'date_fr')));
+            array_push($functions, new \Twig_SimpleFunction('slugify', array($this, 'slugify')));
+            array_push($functions, new \Twig_SimpleFunction('truncate', array($this, 'truncate')));
+            array_push($functions, new \Twig_SimpleFunction('array_cast', array($this, 'array_cast')));
 
             return $functions;
         }
@@ -19,7 +25,7 @@
         public function asset ($ressource) {
             return PUBLIC_URL . $ressource;
         }
-        
+
         public function json_decode ($ressource) {
             return json_decode($ressource);
         }
@@ -62,7 +68,7 @@
             return $date_fr;
         }
 
-        public function slugify($ressource) {
+        public function slugify ($ressource) {
             $slug = new Slugify();
 
             return $slug->slugify($ressource);

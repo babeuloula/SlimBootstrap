@@ -26,11 +26,11 @@
 
         public function setGlobals() {
             $twig = $this->app->view()->getEnvironment();
-            $twig->addGlobal('inputs', (isset($_SESSION['front']['inputs'])) ? $_SESSION['front']['inputs'] : '');
-            $twig->addGlobal('errors', (isset($_SESSION['front']['errors'])) ? $_SESSION['front']['errors'] : '');
-            $twig->addGlobal('user', (isset($_SESSION['front']['user'])) ? $_SESSION['front']['user'] : '');
+            $twig->addGlobal('inputs', (isset($_SESSION['site']['inputs'])) ? $_SESSION['site']['inputs'] : '');
+            $twig->addGlobal('errors', (isset($_SESSION['site']['errors'])) ? $_SESSION['site']['errors'] : '');
+            $twig->addGlobal('user', (isset($_SESSION['site']['user'])) ? $_SESSION['site']['user'] : '');
 
-            unset($_SESSION['front']['inputs'], $_SESSION['front']['errors']);
+            unset($_SESSION['site']['inputs'], $_SESSION['site']['errors']);
         }
 
 

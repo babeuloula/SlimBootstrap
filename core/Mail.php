@@ -15,10 +15,10 @@
         /**
          * Création du mail
          *
-         * @param mixed $sujet
-         * @param mixed $from
-         * @param mixed $to
-         * @param mixed $body
+         * @param mixed $sujet Sujet du mail
+         * @param mixed $from Expéditeur du mail (array ou string)
+         * @param mixed $to Destinaires du mail (array)
+         * @param mixed $body Contenu du mail
          */
         public function __construct($sujet = false, $from = false, $to = false, $body = false) {
             $this->transport = \Swift_MailTransport::newInstance();
@@ -28,56 +28,39 @@
             $this->message->setPriority(3);
 
             if($sujet) {
-                $this->message->setSubject($sujet);
+                $this->setSujet($sujet);
             }
 
             if($from) {
-                if(is_array($from)) {
-                    foreach($from as $key => $f) {
-                        if(is_numeric($key)) {
-                            $this->message->setFrom($f);
-                            $this->message->setReplyTo($f);
-                            $this->message->setReturnPath($f);
-                            $this->message->setSender($f);
-                        } else {
-                            $this->message->setFrom($key, $f);
-                            $this->message->setReplyTo($key, $f);
-                            $this->message->setReturnPath($key, $f);
-                            $this->message->setSender($key, $f);
-                        }
-                    }
-                } else {
-                    $this->message->setFrom($from);
-                    $this->message->setReplyTo($from);
-                    $this->message->setReturnPath($from);
-                    $this->message->setSender($from);
-                }
+                $this->setFrom($from);
             }
 
             if($to) {
-                if(is_array($to)) {
-                    foreach($to as $key => $t) {
-                        if(is_numeric($key)) {
-                            $this->message->setTo($t);
-                        } else {
-                            $this->message->setTo($key, $t);
-                        }
-                    }
-                } else {
-                    $this->message->setTo($to);
-                }
+                $this->setTo($to);
             }
 
             if($body) {
-                $this->message->setBody($body, 'text/html');
-                $this->message->addPart($this->html2text($body), 'text/plain');
+                $this->setBody($body);
             }
         }
 
+
+        /**
+         * Set le sujet
+         *
+         * @param string $sujet Sujet du mail
+         */
         public function setSujet($sujet) {
             $this->message->setSubject($sujet);
         }
 
+
+        /**
+         * Set l'expediteur
+         * array('john@doe.com' => 'John Doe') ou 'john@doe.com'
+         *
+         * @param mixed $from Expéditeur du mail (array ou string)
+         */
         public function setFrom($from) {
             if(is_array($from)) {
                 foreach($from as $key => $f) {
@@ -101,20 +84,23 @@
             }
         }
 
+
+        /**
+         * Set les destinataires
+         * array('john@doe.com' => 'John Doe')
+         *
+         * @param array $to Destinataires du mail
+         */
         public function setTo($to) {
-            if(is_array($to)) {
-                foreach($to as $key => $t) {
-                    if(is_numeric($key)) {
-                        $this->message->setTo($t);
-                    } else {
-                        $this->message->setTo($key, $t);
-                    }
-                }
-            } else {
-                $this->message->setTo($to);
-            }
+            $this->message->setTo($to);
         }
 
+
+        /**
+         * Set le contenu du mail
+         *
+         * @param string $body Contenu du mail
+         */
         public function setBody($body) {
             $this->message->setBody($body, 'text/html');
             $this->message->addPart($this->html2text($body), 'text/plain');
@@ -124,9 +110,9 @@
         /**
          * Ajoute la signature DKIM
          *
-         * @param $path
-         * @param $domaine
-         * @param $selector
+         * @param string $path Dossier où est stocké la clé
+         * @param string $domaine Domaine de la clé
+         * @param string $selector Sélecteur de la clé
          */
         public function DKIM($path, $domaine, $selector) {
             $privateKey = file_get_contents($path);
@@ -139,7 +125,7 @@
         /**
          * Ajoute le bandeau au message
          *
-         * @param $path
+         * @param string $path Dossier du bandeau
          */
         public function addBandeau($path) {
             $cid = $this->message->embed(\Swift_Image::fromPath($path));
@@ -151,11 +137,16 @@
         /**
          * Ajoute une PJ à SwiftMailer
          *
-         * @param string $path
-         * @param mixed $name
+         * @param string $file Emplacement du fichier ou stream du fichier
+         * @param mixed $name Nom du fichier à joindre
+         * @param mixed $contentType Type de fichier envoyé
          */
-        public function addAttachment($path, $name = false) {
-            $attachment = \Swift_Attachment::fromPath($path);
+        public function addAttachment($file, $name = false, $contentType = null) {
+            if(@is_file($file)) {
+                $attachment = \Swift_Attachment::fromPath($file);
+            } else {
+                $attachment = \Swift_Attachment::newInstance($file, null, $contentType);
+            }
 
             if($name) {
                 $attachment->setFilename($name);
@@ -168,7 +159,7 @@
         /**
          * Envoi le mail
          *
-         * @return boolean
+         * @return boolean True en cas de reussite, sinon false
          */
         public function send() {
             $mailer = \Swift_Mailer::newInstance($this->transport);
@@ -187,9 +178,9 @@
         /**
          * Transforme le contenu du body en plain text
          *
-         * @param string $html
+         * @param string $html Contenu du body en HTML
          *
-         * @return string
+         * @return string Contenu du body sans le HTML
          */
         private function html2text($html) {
             return html_entity_decode(

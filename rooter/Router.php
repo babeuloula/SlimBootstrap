@@ -24,11 +24,7 @@
                     die('Le controller <strong>' . $controller_name . '</strong> n\'existe pas dans le dossier <strong>/controller/' . $controller_name . '</strong>.');
                 }
 
-                try {
-                    call_user_func_array(array($controller, $method), func_get_args());
-                } catch(\Exception $e) {
-                    die('La fonction <strong>' . $method . '</strong> n\'existe pas dans le controller <strong>' . $controller_name . '</strong>.');
-                }
+                call_user_func_array(array($controller, $method), func_get_args());
             });
         }
 
@@ -40,15 +36,23 @@
             return $this->call('post', $url, $action);
         }
 
-        public function insert($url, $action) {
-            return $this->call('post', $url, $action);
-        }
-
-        public function update($url, $action) {
-            return $this->call('post', $url, $action);
+        public function put($url, $action) {
+            return $this->call('put', $url, $action);
         }
 
         public function delete($url, $action) {
-            return $this->call('get', $url, $action);
+            return $this->call('delete', $url, $action);
+        }
+
+        public function options($url, $action) {
+            return $this->call('options', $url, $action);
+        }
+
+        public function patch($url, $action) {
+            return $this->call('patch', $url, $action);
+        }
+
+        public function map($url, $action) {
+            return $this->call('map', $url, $action);
         }
     }

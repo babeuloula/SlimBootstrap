@@ -10,7 +10,7 @@
         public $table = false;
         public $lastId;
 
-        public function __construct($table = false, $sqlite = false) {
+        public function __construct($table = false, $sqlite = false, $cecmail = false) {
             if($this->table === false) {
                 if($table === false) {
                     $this->table = strtolower(get_class($this));
@@ -28,17 +28,22 @@
                 if($sqlite) {
                     $this->db = 'sqlite';
 
-                    $dir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bdd.sqlite';
+                    $dir = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'bdd.sqlite';
 
                     $pdo = new PDO('sqlite:' . $dir);
                     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 } else {
-                    if (DEBUG) {
-                        $config = Config::$database['local'];
-                        $this->db = 'local';
+                    if($cecmail) {
+                        $config = Config::$database['cecmail'];
+                        $this->db = 'cecmail';
                     } else {
-                        $config = Config::$database['dev'];
-                        $this->db = 'dev';
+                        if ($_SERVER['SERVER_ADDR'] == "192.168.1.200") {
+                            $config = Config::$database['local'];
+                            $this->db = 'local';
+                        } else {
+                            $config = Config::$database['dev'];
+                            $this->db = 'dev';
+                        }
                     }
 
                     $pdo = new PDO('mysql:host=' . $config['host'] . ';dbname=' . $config['database'], $config['user'], $config['password']);
@@ -57,11 +62,16 @@
             }
         }
 
-        public function query($query, $datas = array()) {
+        public function setTable($name) {
+            $this->table = $name;
+        }
+
+
+        public function query($query, $datas = array(), $return = PDO::FETCH_ASSOC) {
             $prepare = $this->pdo->prepare($query);
             $prepare->execute($datas);
 
-            return new Collection($prepare->fetchAll(PDO::FETCH_ASSOC));
+            return new Collection($prepare->fetchAll($return));
         }
 
         public function insert($query, $datas = array()) {
@@ -105,6 +115,11 @@
                 }
             }
 
+            // Construction du group by
+            if(isset($query['group_by'])) {
+                $sql.= " GROUP BY " . $query['group_by'];
+            }
+
             // Construction de l'ordre
             if(isset($query['ordre'])) {
                 $sql.= " ORDER BY ";
@@ -130,7 +145,13 @@
                 }
             }
 
-            return $this->query($sql);
+            // Foramt de retour
+            $return = PDO::FETCH_ASSOC;
+            if(isset($query['return'])) {
+                $return = $query['return'];
+            }
+
+            return $this->query($sql, array(), $return);
         }
 
         public function findFirst($query) {
@@ -141,32 +162,5 @@
         public function findLast($query) {
             $last = $this->find($query);
             return $last->last();
-        }
-
-        public function rowCount($conditions = false) {
-            $sql = "SELECT COUNT(id_".$this->table.") AS total FROM ".$this->table;
-
-            if($conditions) {
-                $sql.= " WHERE ";
-
-                if(!is_array($conditions)) {
-                    $sql.= $conditions;
-                } else {
-                    $where = array();
-                    foreach($conditions as $key => $value) {
-                        if(!is_numeric($value)) {
-                            $value = $this->pdo->quote($value);
-                        }
-
-                        array_push($where, $key . " = " . $value);
-                    }
-
-                    $sql.= implode(' AND ', $where);
-                }
-            }
-
-            $rowCount = $this->query($sql);
-
-            return intval($rowCount[0]['total']);
         }
     }
