@@ -11,6 +11,7 @@
             $functions = parent::getFunctions();
 
             // Ajoutez vos fonctions ici
+            array_push($functions, new \Twig_SimpleFunction('dump', array($this, 'dump')));
             array_push($functions, new \Twig_SimpleFunction('asset', array($this, 'asset')));
             array_push($functions, new \Twig_SimpleFunction('json_decode', array($this, 'json_decode')));
             array_push($functions, new \Twig_SimpleFunction('show_num', array($this, 'show_num')));
@@ -18,12 +19,24 @@
             array_push($functions, new \Twig_SimpleFunction('slugify', array($this, 'slugify')));
             array_push($functions, new \Twig_SimpleFunction('truncate', array($this, 'truncate')));
             array_push($functions, new \Twig_SimpleFunction('array_cast', array($this, 'array_cast')));
+            array_push($functions, new \Twig_SimpleFunction('isMobile', array($this, 'isMobile')));
+            array_push($functions, new \Twig_SimpleFunction('isTablet', array($this, 'isTablet')));
 
             return $functions;
         }
 
-        public function asset ($ressource) {
-            return PUBLIC_URL . $ressource;
+        public function dump() {
+            foreach(func_get_args() as $arg) {
+                var_dump($arg);
+            }
+        }
+
+        public function asset ($ressource, $cms = false) {
+            if ($cms) {
+                return Config::getOption('private_url') . 'cms/' . $ressource;
+            } else {
+                return Config::getOption('public_url') . $ressource;
+            }
         }
 
         public function json_decode ($ressource) {
@@ -35,37 +48,7 @@
         }
 
         public function date_fr ($date, $full = true) {
-            if ($full) {
-                $texte_en = array(
-                    "Monday", "Tuesday", "Wednesday", "Thursday",
-                    "Friday", "Saturday", "Sunday", "January",
-                    "February", "March", "April", "May",
-                    "June", "July", "August", "September",
-                    "October", "November", "December"
-                );
-                $texte_fr = array(
-                    "Lundi", "Mardi", "Mercredi", "Jeudi",
-                    "Vendredi", "Samedi", "Dimanche", "Janvier",
-                    "Février", "Mars", "Avril", "Mai",
-                    "Juin", "Juillet", "Août", "Septembre",
-                    "Octobre", "Novembre", "Décembre"
-                );
-                $date_fr = str_replace($texte_en, $texte_fr, $date);
-            } else {
-                $texte_en = array(
-                    "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",
-                    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-                    "Aug", "Sep", "Oct", "Nov", "Dec"
-                );
-                $texte_fr = array(
-                    "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim",
-                    "Jan", "Fév", "Mar", "Avr", "Mai", "Jui",
-                    "Jui", "Aoû", "Sep", "Oct", "Nov", "Déc"
-                );
-                $date_fr = str_replace($texte_en, $texte_fr, $date);
-            }
-
-            return $date_fr;
+            return Date::fr($date, $full);
         }
 
         public function slugify ($ressource) {
@@ -75,10 +58,20 @@
         }
 
         public function truncate ($ressource, $length = 250) {
-            return \Core\Truncate::truncate($ressource, $length);
+            return Truncate::truncate($ressource, $length);
         }
 
         public function array_cast ($ressource) {
             return get_object_vars($ressource);
+        }
+
+        public function isMobile() {
+            $detect = new Mobile_Detect;
+            return $detect->isMobile() && !$detect->isTablet();
+        }
+
+        public function isTablet() {
+            $detect = new Mobile_Detect;
+            return $detect->isTablet();
         }
     }

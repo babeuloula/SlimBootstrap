@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+
+<html lang="fr-FR" prefix="og: http://ogp.me/ns#">
+
+    <head>
+
+        <title>{{ TITRE }}</title>
+
+        <link rel="shortcut icon" type="image/png" href="{{ asset('css/images/favicon.png') }}">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
+
+        {% if DEBUG %}
+            <link rel="stylesheet" href="{{ asset('css/reset.css') }}">
+        {% else %}
+            <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+        {% endif %}
+
+        <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <meta charset="UTF-8">
+        <meta http-equiv="content-language" content="fr">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+        <meta name="keywords" content="{{ SITE_KEYWORDS }}">
+        <meta name="description" content="{{ truncate(SITE_DESCRIPTION, 160) }}">
+
+        <link rel="canonical" href="{{ SITE_URL_PAGE }}">
+
+        <meta property="og:locale" content="fr_FR">
+        <meta property="og:language" content="fr">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="{{ SITE_NOM }}">
+        <meta property="og:title" content="{{ SITE_TITRE }}">
+        <meta property="og:description" content="{{ truncate(SITE_DESCRIPTION, 160) }}">
+        <meta property="og:url" content="{{ SITE_URL_PAGE }}">
+        <meta property="og:image" content="{{ SITE_URL ~ SITE_LOGO }}">
+
+        <meta property="article:publisher" content="{{ SITE_FACEBOOK }}">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:description" content="{{ truncate(SITE_DESCRIPTION, 160) }}">
+        <meta name="twitter:title" content="{{ SITE_TITRE }}">
+        <meta name="twitter:site" content="{{ SITE_TWITTER }}">
+        <meta name="twitter:author" content="{{ SITE_TWITTER }}">
+        <meta name="twitter:domain" content="{{ SITE_NOM }}">
+        <meta name="twitter:image:src" content="{{ SITE_URL ~ SITE_LOGO }}">
+
+    </head>
+
+    <body>
+
+        {% block contenu %}{% endblock %}
+
+        {% if debug %}
+            <!-- Chargement des JS non compilés -->
+        {% else %}
+            <script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
+            <script type="text/javascript">
+            jQuery(function($){
+                if ($.cookie('cc_cookie_accept') == "cc_cookie_accept") {
+                    alert('ANALYTICS');
+                }
+            });
+        </script>
+        {% endif %}
+
+        {% block javascript %}{% endblock %}
+
+    </body>
+
+</html>

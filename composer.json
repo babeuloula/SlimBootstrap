@@ -1,22 +1,26 @@
 {
-  "authors": [
-    {
-      "name": "BaBeuloula",
-      "email": "contact@babeuloula.fr"
+    "name": "slim/bootstrap",
+    "authors": [
+        {
+            "name": "BaBeuloula",
+            "email": "babeuloula@gmail.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "^3.0",
+        "slim/twig-view": "^2.0",
+        "zeuxisoo/core-validator": "dev-master",
+        "cocur/slugify": "~1.0",
+        "swiftmailer/swiftmailer": "@stable",
+        "slim/csrf": "^0.6.0",
+        "slim/flash": "^0.1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Router\\": "router",
+            "Core\\": "core",
+            "Model\\": "models",
+            "Controller\\": "controllers"
+        }
     }
-  ],
-  "require": {
-    "slim/slim": "2.*",
-    "slim/views": "0.1.*",
-    "twig/twig": "~1.0",
-    "zeuxisoo/core-validator": "dev-master",
-    "cocur/slugify": "~1.0",
-    "swiftmailer/swiftmailer": "@stable"
-  },
-  "autoload": {
-    "psr-4": {
-      "Rooter\\": "rooter",
-      "Core\\": "core"
-    }
-  }
 }

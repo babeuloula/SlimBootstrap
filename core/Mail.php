@@ -3,7 +3,6 @@
 
     namespace Core;
 
-
     class Mail {
 
         public $error = '';

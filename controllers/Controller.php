@@ -1,36 +1,53 @@
 <?php
 
+    namespace Controller;
+
     class Controller {
 
-        protected $app;
+        protected $container;
+        protected $view;
         protected $flash;
+        protected $router;
 
-        public function __construct($app) {
-            $this->app = $app;
-            $this->flash = new \Core\Flash();
+        public function __construct($container) {
+            $this->container = $container;
+            $this->view = $this->container->view;
+            $this->flash = $this->container->flash;
+            $this->router = $this->container->router;
+        }
 
-            $this->setGlobals();
+        public function notFound() {
+            $errorHandler = $this->container->notFoundHandler;
+            return $errorHandler($this->container->get('request'), $this->container->get('response'));
+        }
+
+        public function notAllowed() {
+            $errorHandler = $this->container->notAllowedHandler;
+            return $errorHandler($this->container->get('request'), $this->container->get('response'));
+        }
+
+        public function redirect($url) {
+            $response = $this->container->get('response');
+
+            return $response->withStatus(302)
+                            ->withHeader('Location', $url);
+        }
+
+        public function redirectTo($routeName, $params = array()) {
+            return $this->redirect($this->router->pathFor($routeName, $params));
         }
 
         public function loadModel($name, $table = false) {
-            if(file_exists(ROOT . DS . "models" . DS . $name . ".php")) {
-                require_once ROOT . DS . "models" . DS . $name . ".php";
+            if(file_exists(\Core\Config::getOption('MODLS_PATH') . $name . ".php")) {
+                require_once \Core\Config::getOption('MODLS_PATH') . $name . ".php";
             } else {
                 die('Le model <strong>' . $name . '</strong> n\'existe pas dans le dossier <strong>/models/' . $name . '</strong>.');
             }
 
             if(!isset($this->$name)) {
-                $this->$name = new $name($table);
+                $modelName = '\Model\\' . $name;
+                $this->$name = new $modelName($table);
             }
-        }
-
-        public function setGlobals() {
-            $twig = $this->app->view()->getEnvironment();
-            $twig->addGlobal('inputs', (isset($_SESSION['site']['inputs'])) ? $_SESSION['site']['inputs'] : '');
-            $twig->addGlobal('errors', (isset($_SESSION['site']['errors'])) ? $_SESSION['site']['errors'] : '');
-            $twig->addGlobal('user', (isset($_SESSION['site']['user'])) ? $_SESSION['site']['user'] : '');
-
-            unset($_SESSION['site']['inputs'], $_SESSION['site']['errors']);
         }
 
 

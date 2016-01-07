@@ -1,5 +1,7 @@
 <?php
 
+    namespace Model;
+
     use \Core\Config, \Core\Collection;
 
     class Model {
@@ -10,10 +12,11 @@
         public $table = false;
         public $lastId;
 
-        public function __construct($table = false, $sqlite = false, $cecmail = false) {
+        public function __construct($table = false, $sqlite = false) {
             if($this->table === false) {
                 if($table === false) {
                     $this->table = strtolower(get_class($this));
+                    $this->table = str_replace('model\\', '', $this->table);
                 } else {
                     $this->table = $table;
                 }
@@ -28,33 +31,38 @@
                 if($sqlite) {
                     $this->db = 'sqlite';
 
-                    $dir = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'bdd.sqlite';
+                    $dir = \Core\Config::getOption('sqlite.path') . \Core\Config::getOption('sqlite.file');
 
-                    $pdo = new PDO('sqlite:' . $dir);
-                    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    $pdo = new \PDO('sqlite:' . $dir);
+                    $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 } else {
-                    if($cecmail) {
-                        $config = Config::$database['cecmail'];
-                        $this->db = 'cecmail';
+                    if ($_SERVER['SERVER_ADDR'] == "192.168.1.200") {
+                        $config = array(
+                            'host'     => Config::getOption('local.host'),
+                            'database' => Config::getOption('local.database'),
+                            'user'     => Config::getOption('local.user'),
+                            'password' => Config::getOption('local.password'),
+                        );
+                        $this->db = 'local';
                     } else {
-                        if ($_SERVER['SERVER_ADDR'] == "192.168.1.200") {
-                            $config = Config::$database['local'];
-                            $this->db = 'local';
-                        } else {
-                            $config = Config::$database['dev'];
-                            $this->db = 'dev';
-                        }
+                        $config = array(
+                            'host'     => Config::getOption('dev.host'),
+                            'database' => Config::getOption('dev.database'),
+                            'user'     => Config::getOption('dev.user'),
+                            'password' => Config::getOption('dev.password'),
+                        );
+                        $this->db = 'dev';
                     }
 
-                    $pdo = new PDO('mysql:host=' . $config['host'] . ';dbname=' . $config['database'], $config['user'], $config['password']);
-                    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+                    $pdo = new \PDO('mysql:host=' . $config['host'] . ';dbname=' . $config['database'], $config['user'], $config['password']);
+                    $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
                     $pdo->exec('SET NAMES utf8');
                 }
 
                 Model::$connections[$this->db] = $pdo;
                 $this->pdo = $pdo;
-            } catch (PDOException $e) {
-                if(Config::$debug === true) {
+            } catch (\PDOException $e) {
+                if(Config::getOption('debug') === true) {
                     die($e->getMessage());
                 } else {
                     die('Une erreur est survenue lors de la connexion &agrave; la base de donn&eacute;es');
@@ -67,11 +75,15 @@
         }
 
 
-        public function query($query, $datas = array(), $return = PDO::FETCH_ASSOC) {
+        public function query($query, $datas = array(), $return = \PDO::FETCH_ASSOC) {
             $prepare = $this->pdo->prepare($query);
             $prepare->execute($datas);
 
-            return new Collection($prepare->fetchAll($return));
+            $datas = $prepare->fetchAll($return);
+
+            $prepare->closeCursor();
+
+            return new Collection($datas);
         }
 
         public function insert($query, $datas = array()) {
@@ -79,17 +91,27 @@
             $query = $prepare->execute($datas);
             $this->lastId = $this->pdo->lastInsertId();
 
+            $prepare->closeCursor();
+
             return $query;
         }
 
         public function update($query, $datas = array()) {
             $prepare = $this->pdo->prepare($query);
-            return $prepare->execute($datas);
+            $result = $prepare->execute($datas);
+
+            $prepare->closeCursor();
+
+            return $result;
         }
 
         public function delete($query, $datas = array()) {
             $prepare = $this->pdo->prepare($query);
-            return $prepare->execute($datas);
+            $result = $prepare->execute($datas);
+
+            $prepare->closeCursor();
+
+            return $result;
         }
 
         public function find($query = null) {
@@ -146,7 +168,7 @@
             }
 
             // Foramt de retour
-            $return = PDO::FETCH_ASSOC;
+            $return = \PDO::FETCH_ASSOC;
             if(isset($query['return'])) {
                 $return = $query['return'];
             }
