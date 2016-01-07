@@ -58,63 +58,6 @@
 
 
 
-    // Routes pour le back office
-    $app->get('/' . \Core\Config::getOption('cms.path.name') . '/', \Controller\LoginController::class.':signin')
-        ->setName('signin');
-    $app->group('/' . \Core\Config::getOption('cms.path.name'), function() use ($app) {
-        $app->post('/login/', \Controller\LoginController::class.':login')
-            ->setName('login');
-
-        // Dashboard
-        $app->get('/dashboard/', \Controller\PageController::class.':index')
-            ->setName('dashboard');
-
-        // Déconnexion
-        $app->get('/disconnect/', \Controller\LoginController::class.':disconnect')
-            ->setName('disconnect');
-
-        // Mes images
-        $app->get('/mes-images/', \Controller\ImageController::class.':findAll')
-            ->setName('mes_images');
-        $app->post('/mes-images/ajouter-une-image/', \Controller\ImageController::class.':ajouter')
-            ->setName('ajouter_image');
-        $app->post('/mes-images/supprimer-une-image/{image}', \Controller\ImageController::class.':supprimer')
-            ->setName('supprimer_image');
-        $app->get('/files/images/{image_name}', \Controller\ImageController::class.':afficher')
-            ->setName('mon_image');
-        $app->get('/files/images/thumb/{image_name}', \Controller\ImageController::class.':thumb')
-            ->setName('mon_image_thumb');
-
-        // Filebrowser
-        /*$app->get('/[{route:[0-9a-zA-Z/-]+}/]filebrowser/browse/', \Controller\FilebrowserController::class.':browse')
-            ->setName('browse');
-        $app->post('/[{route:[0-9a-zA-Z/-]+}/]filebrowser/mkdir/', \Controller\FilebrowserController::class.':mkdir')
-            ->setName('mkdir');
-        $app->post('/[{route:[0-9a-zA-Z/-]+}/]filebrowser/upload/', \Controller\FilebrowserController::class.':upload')
-            ->setName('upload');
-        $app->post('/[{route:[0-9a-zA-Z/-]+}/]/filebrowser/remove/{file}', \Controller\FilebrowserController::class.':remove')
-            ->setName('remove');*/
-    })->add(function ($request, $response, $next) use ($app) {
-        // Remplace la fonction $this->isConnected();
-        if(!isset($_SESSION['admin']['user']) && $request->getAttributes()['route']->getName() != 'login') {
-            $container = $app->getContainer();
-            $flash = $container->flash;
-            $router = $container->router;
-
-            $flash->addMessage('danger', "Vous devez vous connecter pour accéder à cette page.");
-
-            return $response->withStatus(302)
-                            ->withHeader('Location', $router->pathFor('signin'));
-        }
-
-        $response = $next($request, $response);
-
-        return $response;
-    });
-
-
-
-
     // Ajout d'un middleware global
     $app->add(function($request, $response, $next) {
         $twig = $this->view->getEnvironment();
