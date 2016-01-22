@@ -114,7 +114,7 @@
             return $result;
         }
 
-        public function find($query = null) {
+        public function find($query = null, $datas = array()) {
             $sql = "SELECT * FROM ".$this->table;
 
             // Construction de la condition
@@ -173,16 +173,16 @@
                 $return = $query['return'];
             }
 
-            return $this->query($sql, array(), $return);
+            return $this->query($sql, $datas, $return);
         }
 
-        public function findFirst($query) {
-            $first = $this->find($query);
+        public function findFirst($query, $datas = array()) {
+            $first = $this->find($query, $datas);
             return $first->first();
         }
 
-        public function findLast($query) {
-            $last = $this->find($query);
+        public function findLast($query, $datas = array()) {
+            $last = $this->find($query, $datas);
             return $last->last();
         }
     }

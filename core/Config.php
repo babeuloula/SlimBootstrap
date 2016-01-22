@@ -30,9 +30,7 @@
                 $key = str_replace('.', '_', $key);
                 $key = strtoupper($key);
 
-                if($key == 'DEBUG') {
-                    $value = ($value == 'true') ? true : false;
-                }
+                $value = ($value == 'true') ? true : false;
 
                 $options[$key] = $value;
             }

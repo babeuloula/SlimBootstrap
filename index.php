@@ -1,6 +1,6 @@
 <?php
 
-    require 'vendor/autoload.php';
+    require __DIR__ . '/vendor/autoload.php';
 
     // Démarrage de la session
     session_cache_limiter(false);
