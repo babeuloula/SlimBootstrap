@@ -176,12 +176,12 @@
             return $this->query($sql, $datas, $return);
         }
 
-        public function findFirst($query, $datas = array()) {
+        public function findFirst($query = null, $datas = array()) {
             $first = $this->find($query, $datas);
             return $first->first();
         }
 
-        public function findLast($query, $datas = array()) {
+        public function findLast($query = null, $datas = array()) {
             $last = $this->find($query, $datas);
             return $last->last();
         }
