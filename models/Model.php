@@ -12,7 +12,7 @@
         public $table = false;
         public $lastId;
 
-        public function __construct($table = false, $sqlite = false) {
+        public function __construct($table = false, $cecmail = false, $sqlite = false) {
             if($this->table === false) {
                 if($table === false) {
                     $this->table = strtolower(get_class($this));
@@ -36,22 +36,32 @@
                     $pdo = new \PDO('sqlite:' . $dir);
                     $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 } else {
-                    if ($_SERVER['SERVER_ADDR'] == "192.168.1.200") {
+                    if($cecmail) {
                         $config = array(
-                            'host'     => Config::getOption('local.host'),
-                            'database' => Config::getOption('local.database'),
-                            'user'     => Config::getOption('local.user'),
-                            'password' => Config::getOption('local.password'),
+                            'host'     => Config::getOption('cecmail.host'),
+                            'database' => Config::getOption('cecmail.database'),
+                            'user'     => Config::getOption('cecmail.user'),
+                            'password' => Config::getOption('cecmail.password'),
                         );
-                        $this->db = 'local';
+                        $this->db = 'cecmail';
                     } else {
-                        $config = array(
-                            'host'     => Config::getOption('dev.host'),
-                            'database' => Config::getOption('dev.database'),
-                            'user'     => Config::getOption('dev.user'),
-                            'password' => Config::getOption('dev.password'),
-                        );
-                        $this->db = 'dev';
+                        if ($_SERVER['SERVER_ADDR'] == "192.168.1.200") {
+                            $config = array(
+                                'host'     => Config::getOption('local.host'),
+                                'database' => Config::getOption('local.database'),
+                                'user'     => Config::getOption('local.user'),
+                                'password' => Config::getOption('local.password'),
+                            );
+                            $this->db = 'local';
+                        } else {
+                            $config = array(
+                                'host'     => Config::getOption('dev.host'),
+                                'database' => Config::getOption('dev.database'),
+                                'user'     => Config::getOption('dev.user'),
+                                'password' => Config::getOption('dev.password'),
+                            );
+                            $this->db = 'dev';
+                        }
                     }
 
                     $pdo = new \PDO('mysql:host=' . $config['host'] . ';dbname=' . $config['database'], $config['user'], $config['password']);
@@ -76,6 +86,7 @@
 
 
         public function query($query, $datas = array(), $return = \PDO::FETCH_ASSOC) {
+
             $prepare = $this->pdo->prepare($query);
             $prepare->execute($datas);
 
@@ -176,12 +187,61 @@
             return $this->query($sql, $datas, $return);
         }
 
-        public function findFirst($query, $datas = array()) {
+        public function findFirst($query = null, $datas = array()) {
+            if(!is_array($query)) {
+                $query = array();
+            }
+
+            if(!isset($query['limit'])) {
+                $query['limit'] = array(
+                    'min' => 0,
+                    'max' => 1,
+                );
+            }
+
             $first = $this->find($query, $datas);
             return $first->first();
         }
 
-        public function findLast($query, $datas = array()) {
+        public function findLast($query = null, $datas = array()) {
+            if(!is_array($query)) {
+                $query = array();
+            }
+
+            if(isset($query['ordre'])) {
+                if(!is_array($query['ordre'])) {
+                    $ordres = explode(',', $query['ordre']);
+                    foreach($ordres as $key => $ordre) {
+                        if(strpos(trim($ordre), 'ASC') !== FALSE) {
+                            $ordres[$key] = trim(str_replace('ASC', 'DESC', $ordre));
+                        } else if(strpos(trim($ordre), 'DESC') !== FALSE) {
+                            $ordres[$key] = trim(str_replace('DESC', 'ASC', $ordre));
+                        }
+                    }
+
+                    $query['ordre'] = implode(', ', $ordres);
+                } else {
+                    foreach($query['ordre'] as $key => $value) {
+                        if($value == 'ASC') {
+                            $query['ordre'][$key] = 'DESC';
+                        } else if($value == 'DESC') {
+                            $query['ordre'][$key] = 'ASC';
+                        }
+                    }
+                }
+            } else {
+                $query['ordre'] = array(
+                    'id_' . $this->table => 'DESC'
+                );
+            }
+
+            if(!isset($query['limit'])) {
+                $query['limit'] = array(
+                    'min' => 0,
+                    'max' => 1,
+                );
+            }
+
             $last = $this->find($query, $datas);
             return $last->last();
         }

@@ -1,8 +1,10 @@
 {% extends 'base/base.html.twig' %}
 
-{% set TITRE = 'Hello ' ~ name %}
+{% set SITE_DESCRIPTION = 'fdddsdqd' %}
 
 {% block contenu %}
+    {{ dump(FLASH) }}
+
     Hello {{ name }}
 {% endblock %}
 

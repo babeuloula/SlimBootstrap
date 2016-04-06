@@ -24,6 +24,10 @@
 
     // Intégration du système de vues Twig à Slim
     $container['view'] = function ($c) {
+        // Activation du cache
+        /*$view = new \Slim\Views\Twig(\Core\Config::getOption('VIEWS_PATH'), array(
+            'cache' => (!\Core\Config::getOption('debug')) ? \Core\Config::getOption('CACHE_PATH') : false,
+        ));*/
         $view = new \Slim\Views\Twig(\Core\Config::getOption('VIEWS_PATH'));
 
         // Intégration des fonctions perso à Twig
@@ -52,6 +56,8 @@
 
 
     // Routes pour le front office
+    $app->get('/sitemap.xml', \Controller\SiteMapController::class . ':sitemap');
+
     $app->get('/hello/{name}', \Controller\HelloController::class.":Hello")
         ->setName('hello');
 
@@ -67,9 +73,10 @@
 
         $uri = $this->get('request')->getUri();
         $basePath = trim($uri->getBasePath(), '/');
-        $path = $uri->getPath();
-        $twig->addGlobal('SITE_URL_PAGE', \Core\Config::getOption('site.url') . $basePath . '/' . $path);
-
+        $uri      = $this->get('request')->getUri();
+        $basePath = trim($uri->getBasePath(), '/');
+        $path     = $uri->getPath();
+        $twig->addGlobal('SITE_URL_PAGE', substr_replace(\Core\Config::getOption('site.url'), "", -1) . $path);
         unset($_SESSION['site']['inputs'], $_SESSION['site']['errors']);
 
         $response = $next($request, $response);

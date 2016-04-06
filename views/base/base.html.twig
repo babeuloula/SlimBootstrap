@@ -4,7 +4,7 @@
 
     <head>
 
-        <title>{{ TITRE }}</title>
+        <title>{{ SITE_TITRE }}</title>
 
         <link rel="shortcut icon" type="image/png" href="{{ asset('css/images/favicon.png') }}">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -25,7 +25,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-        <meta name="keywords" content="{{ SITE_KEYWORDS }}">
+        <meta name="keywords" content="{{ SITE_KEYWORDS | raw }}">
         <meta name="description" content="{{ truncate(SITE_DESCRIPTION, 160) }}">
 
         <link rel="canonical" href="{{ SITE_URL_PAGE }}">
@@ -55,18 +55,18 @@
 
         {% block contenu %}{% endblock %}
 
-        {% if debug %}
+        {% if DEBUG %}
             <!-- Chargement des JS non compilés -->
         {% else %}
             <script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
-            <script type="text/javascript">
-            jQuery(function($){
+        {% endif %}
+        <script type="text/javascript">
+            jQuery(function ($) {
                 if ($.cookie('cc_cookie_accept') == "cc_cookie_accept") {
                     alert('ANALYTICS');
                 }
             });
         </script>
-        {% endif %}
 
         {% block javascript %}{% endblock %}
 
