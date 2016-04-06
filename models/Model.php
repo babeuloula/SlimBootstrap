@@ -12,7 +12,7 @@
         public $table = false;
         public $lastId;
 
-        public function __construct($table = false, $cecmail = false, $sqlite = false) {
+        public function __construct($table = false, $sqlite = false) {
             if($this->table === false) {
                 if($table === false) {
                     $this->table = strtolower(get_class($this));
@@ -36,32 +36,22 @@
                     $pdo = new \PDO('sqlite:' . $dir);
                     $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 } else {
-                    if($cecmail) {
+                    if ($_SERVER['SERVER_ADDR'] == "192.168.1.200") {
                         $config = array(
-                            'host'     => Config::getOption('cecmail.host'),
-                            'database' => Config::getOption('cecmail.database'),
-                            'user'     => Config::getOption('cecmail.user'),
-                            'password' => Config::getOption('cecmail.password'),
+                            'host'     => Config::getOption('local.host'),
+                            'database' => Config::getOption('local.database'),
+                            'user'     => Config::getOption('local.user'),
+                            'password' => Config::getOption('local.password'),
                         );
-                        $this->db = 'cecmail';
+                        $this->db = 'local';
                     } else {
-                        if ($_SERVER['SERVER_ADDR'] == "192.168.1.200") {
-                            $config = array(
-                                'host'     => Config::getOption('local.host'),
-                                'database' => Config::getOption('local.database'),
-                                'user'     => Config::getOption('local.user'),
-                                'password' => Config::getOption('local.password'),
-                            );
-                            $this->db = 'local';
-                        } else {
-                            $config = array(
-                                'host'     => Config::getOption('dev.host'),
-                                'database' => Config::getOption('dev.database'),
-                                'user'     => Config::getOption('dev.user'),
-                                'password' => Config::getOption('dev.password'),
-                            );
-                            $this->db = 'dev';
-                        }
+                        $config = array(
+                            'host'     => Config::getOption('dev.host'),
+                            'database' => Config::getOption('dev.database'),
+                            'user'     => Config::getOption('dev.user'),
+                            'password' => Config::getOption('dev.password'),
+                        );
+                        $this->db = 'dev';
                     }
 
                     $pdo = new \PDO('mysql:host=' . $config['host'] . ';dbname=' . $config['database'], $config['user'], $config['password']);
