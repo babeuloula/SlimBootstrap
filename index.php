@@ -1,5 +1,8 @@
 <?php
 
+    use \Psr\Http\Message\ServerRequestInterface as Request;
+    use \Psr\Http\Message\ResponseInterface as Response;
+
     require __DIR__ . '/vendor/autoload.php';
 
     // Démarrage de la session
@@ -65,7 +68,7 @@
 
 
     // Ajout d'un middleware global
-    $app->add(function($request, $response, $next) {
+    $app->add(function(Request $request, Response $response, $next) {
         $twig = $this->view->getEnvironment();
         $twig->addGlobal('INPUTS', (isset($_SESSION['site']['inputs'])) ? $_SESSION['site']['inputs'] : '');
         $twig->addGlobal('ERRORS', (isset($_SESSION['site']['errors'])) ? $_SESSION['site']['errors'] : '');
@@ -92,7 +95,7 @@
     // Erreur 500
     if(!\Core\Config::getOption('debug')) {
         $container['errorHandler'] = function ($c) {
-            return function ($request, $response, $exception) use ($c) {
+            return function (Request $request, Response $response, $exception) use ($c) {
                 $response = $response->withStatus(500)
                                      ->withHeader('Content-Type', 'text/html');
 
@@ -102,7 +105,7 @@
     }
     // Erreur 404
     $container['notFoundHandler'] = function ($c) {
-        return function ($request, $response) use ($c) {
+        return function (Request $request, Response $response) use ($c) {
             $response = $response->withStatus(404)
                                  ->withHeader('Content-Type', 'text/html');
 
@@ -111,7 +114,7 @@
     };
     // Erreur 405
     $container['notAllowedHandler'] = function ($c) {
-        return function ($request, $response) use ($c) {
+        return function (Request $request, Response $response) use ($c) {
             $response = $response->withStatus(405)
                                  ->withHeader('Content-Type', 'text/html');
 

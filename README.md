@@ -57,9 +57,12 @@ Pensez bien à mettre le *namespace Controller* et à faire un *extends Controll
 
     namespace Controller;
 
+    use \Psr\Http\Message\ServerRequestInterface as Request;
+    use \Psr\Http\Message\ResponseInterface as Response;
+
     class HelloController extends Controller {
 
-        public function Hello($request, $response, $args) {
+        public function Hello(Request $request, Response $response, $args) {
             return $this->view->render($response, 'Hello/Hello.html.twig', [
                 'name' => $args['name']
             ]);

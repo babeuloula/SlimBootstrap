@@ -11,9 +11,9 @@
 
         public function __construct ($container) {
             $this->container = $container;
-            $this->view      = $this->container->view;
-            $this->flash     = $this->container->flash;
-            $this->router    = $this->container->router;
+            $this->view      = $container->get('view');
+            $this->flash     = $container->get('flash');
+            $this->router    = $container->get('router');
         }
 
         public function notFound () {
