@@ -40,12 +40,12 @@
 
                 if(is_numeric($value)) {
                     $value = intval($value);
-                }
-
-                if($value == 'true' || $value == 'on' || $value == 'yes') {
-                    $value = true;
-                } else if($value == 'false' || $value == 'off' || $value == 'no' || $value == 'none') {
-                    $value = false;
+                } else {
+                    if($value == 'true' || $value == 'on' || $value == 'yes') {
+                        $value = true;
+                    } else if($value == 'false' || $value == 'off' || $value == 'no' || $value == 'none') {
+                        $value = false;
+                    }
                 }
 
                 $options[$key] = $value;
