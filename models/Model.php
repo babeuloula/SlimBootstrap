@@ -88,6 +88,22 @@
         }
 
         public function insert($query, $datas = array()) {
+            if(!is_string($query)) {
+                $keys = implode(', ', array_keys($query));
+
+                $values = array();
+                foreach(array_values($query) as $value) {
+                    if(!is_numeric($value)) {
+                        array_push($values, $this->pdo->quote($value));
+                    } else {
+                        array_push($values, $value);
+                    }
+                }
+                $values = implode(', ', $values);
+
+                $query = "INSERT INTO ".$this->table . "(" . $keys . ") VALUES (" . $values . ")";
+            }
+
             $prepare = $this->pdo->prepare($query);
             $query = $prepare->execute($datas);
             $this->lastId = $this->pdo->lastInsertId();
@@ -98,6 +114,46 @@
         }
 
         public function update($query, $datas = array()) {
+            if(!is_string($query)) {
+                $sql = "UPDATE ".$this->table . " SET ";
+
+                if(!isset($query['datas'])) {
+                    die("Vous devez spécifier des valeurs à modifier");
+                } else {
+                    $set = array();
+                    foreach($query['datas'] as $row => $value) {
+                        if(!is_numeric($value)) {
+                            $value = $this->pdo->quote($value);
+                        }
+
+                        array_push($set, $row . " = " . $value);
+                    }
+
+                    $sql.= implode(', ', $set);
+                }
+
+                if(isset($query['conditions'])) {
+                    $sql.= " WHERE ";
+
+                    if(!is_array($query['conditions'])) {
+                        $sql.= $query['where'];
+                    } else {
+                        $conditions = array();
+                        foreach($query['conditions'] as $key => $value) {
+                            if(!is_numeric($value)) {
+                                $value = $this->pdo->quote($value);
+                            }
+
+                            array_push($conditions, $key . " = " . $value);
+                        }
+
+                        $sql.= implode(' AND ', $conditions);
+                    }
+                }
+
+                $query = $sql;
+            }
+
             $prepare = $this->pdo->prepare($query);
             $result = $prepare->execute($datas);
 
@@ -107,6 +163,31 @@
         }
 
         public function delete($query, $datas = array()) {
+            if(!is_string($query)) {
+                $sql = "DELETE FROM ".$this->table;
+
+                if(isset($query['conditions'])) {
+                    $sql.= " WHERE ";
+
+                    if(!is_array($query['conditions'])) {
+                        $sql.= $query['where'];
+                    } else {
+                        $conditions = array();
+                        foreach($query['conditions'] as $key => $value) {
+                            if(!is_numeric($value)) {
+                                $value = $this->pdo->quote($value);
+                            }
+
+                            array_push($conditions, $key . " = " . $value);
+                        }
+
+                        $sql.= implode(' AND ', $conditions);
+                    }
+                }
+
+                $query = $sql;
+            }
+
             $prepare = $this->pdo->prepare($query);
             $result = $prepare->execute($datas);
 
