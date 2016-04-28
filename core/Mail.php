@@ -122,18 +122,6 @@
 
 
         /**
-         * Ajoute le bandeau au message
-         *
-         * @param string $path Dossier du bandeau
-         */
-        public function addBandeau($path) {
-            $cid = $this->message->embed(\Swift_Image::fromPath($path));
-            $body = str_replace('%%BANDEAU%%', $cid, $this->message->getBody());
-            $this->message->setBody($body, 'text/html');
-        }
-
-
-        /**
          * Ajoute une PJ à SwiftMailer
          *
          * @param string $file Emplacement du fichier ou stream du fichier
