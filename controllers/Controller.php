@@ -12,10 +12,12 @@
         protected $router;
 
         public function __construct (ContainerInterface $container) {
-            $this->container = $container;
-            $this->view      = $container->get('view');
-            $this->flash     = $container->get('flash');
-            $this->router    = $container->get('router');
+            if($container instanceof ContainerInterface) {
+                $this->container = $container;
+                $this->view      = $container->get('view');
+                $this->flash     = $container->get('flash');
+                $this->router    = $container->get('router');
+            }
         }
 
         public function notFound () {
@@ -48,7 +50,7 @@
 
             if(!isset($this->$name)) {
                 $modelName = '\Model\\' . $name;
-                $this->$name = new $modelName($this->container, $table);
+                $this->$name = new $modelName($table);
             }
         }
 

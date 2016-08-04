@@ -8,20 +8,17 @@
     class Model {
 
         static $connections = array();
+
         public $db;
         public $pdo;
         public $table = false;
-        public $container = false;
         public $lastId;
 
-        public function __construct(ContainerInterface $container = false,  $table = false, $sqlite = false) {
-            if (!$container instanceof ContainerInterface) {
-                $sqlite = $table;
-                $table  = $container;
-            } else {
-                $this->container = $container;
-            }
+        private $config;
 
+
+        public function __construct($table = false, $sqlite = false) {
+            $this->config = \Core\Config::getOptions();
 
             if($this->table === false) {
                 if($table === false) {
@@ -41,25 +38,25 @@
                 if($sqlite) {
                     $this->db = 'sqlite';
 
-                    $dir = $container->get('config')['sqlite.path'] . $container->get('config')['sqlite.file'];
+                    $dir = $this->config['sqlite.path'] . $this->config['sqlite.file'];
 
                     $pdo = new \PDO('sqlite:' . $dir);
                     $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 } else {
                     if ($_SERVER['SERVER_ADDR'] == "192.168.1.200") {
                         $config = array(
-                            'host'     => $container->get('config')['local.host'],
-                            'database' => $container->get('config')['local.database'],
-                            'user'     => $container->get('config')['local.user'],
-                            'password' => $container->get('config')['local.password'],
+                            'host'     => $this->config['local.host'],
+                            'database' => $this->config['local.database'],
+                            'user'     => $this->config['local.user'],
+                            'password' => $this->config['local.password'],
                         );
                         $this->db = 'local';
                     } else {
                         $config = array(
-                            'host'     => $container->get('config')['dev.host'],
-                            'database' => $container->get('config')['dev.database'],
-                            'user'     => $container->get('config')['dev.user'],
-                            'password' => $container->get('config')['dev.password'],
+                            'host'     => $this->config['dev.host'],
+                            'database' => $this->config['dev.database'],
+                            'user'     => $this->config['dev.user'],
+                            'password' => $this->config['dev.password'],
                         );
                         $this->db = 'dev';
                     }
@@ -72,7 +69,7 @@
                 Model::$connections[$this->db] = $pdo;
                 $this->pdo = $pdo;
             } catch (\PDOException $e) {
-                if($container->get('config')['debug'] === true) {
+                if($this->config['debug'] === true) {
                     die($e->getMessage());
                 } else {
                     die('Une erreur est survenue lors de la connexion &agrave; la base de donn&eacute;es');

@@ -14,9 +14,12 @@
             'yearly',
             'never',
         );
+        private $config;
 
         public function __construct () {
-            $this->url = trim(\Core\Config::getOption('site.url'), '/');
+            $this->config = \Core\Config::getOptions();
+
+            $this->url = trim($this->config['site.url'], '/');
 
             $this->xml = new \SimpleXMLElement('<urlset/>');
             $this->xml->addAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
