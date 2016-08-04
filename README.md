@@ -136,9 +136,14 @@ Par contre, les boolean ne sont pas pris en compte.
 #### Récupération
 Vous pouvez récupérer les options dans vos controller ou models grâce à la class *\Core\Config*.
 ```php
-$myOption = \Core\Config::getOption('optName');
+$myOption = $this->container->get('config')['optName'];
 ```
-Dans les vues, les options sont aussi disponible mais seront toutes en majuscules et les `.` sont remplacés par des `_`.
+
+Dans les vues, les options sont aussi disponible mais seront toutes en majuscules, les `.` sont remplacés par des `_` et préfixés de CONFIG pour eviter les problèmes avec des variables existantes.
+```twig
+{{ CONFIG_OPTNAME }}
+```
+
 
 
 ## Arborescence
