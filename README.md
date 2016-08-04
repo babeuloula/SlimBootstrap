@@ -134,9 +134,10 @@ Vous pouvez rentrer toutes vos options dans le fichier *config.ini*.
 Par contre, les boolean ne sont pas pris en compte.
 
 #### Récupération
-Vous pouvez récupérer les options dans vos controller ou models grâce à la class *\Core\Config*.
+Vous pouvez récupérer les options dans vos controller ou models grâce à :
 ```php
 $myOption = $this->container->get('config')['optName'];
+$allOptions = $this->container->get('config');
 ```
 
 Dans les vues, les options sont aussi disponible mais seront toutes en majuscules, les `.` sont remplacés par des `_` et préfixés de *CONFIG* pour eviter les problèmes avec des variables existantes.
