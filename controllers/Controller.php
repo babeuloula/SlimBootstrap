@@ -2,6 +2,8 @@
 
     namespace Controller;
 
+    use Interop\Container\ContainerInterface;
+
     class Controller {
 
         protected $container;
@@ -9,7 +11,7 @@
         protected $flash;
         protected $router;
 
-        public function __construct ($container) {
+        public function __construct (ContainerInterface $container) {
             $this->container = $container;
             $this->view      = $container->get('view');
             $this->flash     = $container->get('flash');
