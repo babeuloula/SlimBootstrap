@@ -121,9 +121,9 @@ $this->flash->addMessage('Test', 'This is a message');
 ### Vues
 Pour changer les informations de la page (titre, description, keywords ...), il ne faudra plus utiliser les blocks car certaines informations sont en double et il ne peut y avoir qu'un seul block de même nom par page.
 
-Toutes ces informations sont en majusules afin de la différencier des autres variables.
+Toutes ces informations sont en majusules afin de la différencier des autres variables et préfixées de *CONFIG* car elles viennent du fichier *config.ini*.
 ```html
-{{ SITE_TITRE = 'Nom de ma page - ' ~ SITE_TITRE }}
+{{ CONFIG_SITE_TITRE = 'Nom de ma page - ' ~ CONFIG_SITE_TITRE }}
 ```
 
 ### Options
@@ -139,11 +139,10 @@ Vous pouvez récupérer les options dans vos controller ou models grâce à la c
 $myOption = $this->container->get('config')['optName'];
 ```
 
-Dans les vues, les options sont aussi disponible mais seront toutes en majuscules, les `.` sont remplacés par des `_` et préfixés de CONFIG pour eviter les problèmes avec des variables existantes.
+Dans les vues, les options sont aussi disponible mais seront toutes en majuscules, les `.` sont remplacés par des `_` et préfixés de *CONFIG* pour eviter les problèmes avec des variables existantes.
 ```twig
 {{ CONFIG_OPTNAME }}
 ```
-
 
 
 ## Arborescence

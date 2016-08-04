@@ -4,7 +4,7 @@
 
     <head>
 
-        <title>{{ SITE_TITRE }}</title>
+        <title>{{ CONFIG_SITE_TITRE }}</title>
 
         <link rel="shortcut icon" type="image/png" href="{{ asset('css/images/favicon.png') }}">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -25,29 +25,29 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-        <meta name="keywords" content="{{ SITE_KEYWORDS | raw }}">
-        <meta name="description" content="{{ truncate(SITE_DESCRIPTION, 160) }}">
+        <meta name="keywords" content="{{ CONFIG_SITE_KEYWORDS | raw }}">
+        <meta name="description" content="{{ truncate(CONFIG_SITE_DESCRIPTION, 160) }}">
 
-        <link rel="canonical" href="{{ SITE_URL_PAGE }}">
+        <link rel="canonical" href="{{ CONFIG_SITE_URL_PAGE }}">
 
         <meta property="og:locale" content="fr_FR">
         <meta property="og:language" content="fr">
         <meta property="og:type" content="website">
-        <meta property="og:site_name" content="{{ SITE_NOM }}">
-        <meta property="og:title" content="{{ SITE_TITRE }}">
-        <meta property="og:description" content="{{ truncate(SITE_DESCRIPTION, 160) }}">
-        <meta property="og:url" content="{{ SITE_URL_PAGE }}">
-        <meta property="og:image" content="{{ SITE_URL ~ SITE_LOGO }}">
+        <meta property="og:site_name" content="{{ CONFIG_SITE_NOM }}">
+        <meta property="og:title" content="{{ CONFIG_SITE_TITRE }}">
+        <meta property="og:description" content="{{ truncate(CONFIG_SITE_DESCRIPTION, 160) }}">
+        <meta property="og:url" content="{{ CONFIG_SITE_URL_PAGE }}">
+        <meta property="og:image" content="{{ CONFIG_SITE_URL ~ CONFIG_SITE_LOGO }}">
 
-        <meta property="article:publisher" content="{{ SITE_FACEBOOK }}">
+        <meta property="article:publisher" content="{{ CONFIG_SITE_FACEBOOK }}">
 
         <meta name="twitter:card" content="summary">
-        <meta name="twitter:description" content="{{ truncate(SITE_DESCRIPTION, 160) }}">
-        <meta name="twitter:title" content="{{ SITE_TITRE }}">
-        <meta name="twitter:site" content="{{ SITE_TWITTER }}">
-        <meta name="twitter:author" content="{{ SITE_TWITTER }}">
-        <meta name="twitter:domain" content="{{ SITE_NOM }}">
-        <meta name="twitter:image:src" content="{{ SITE_URL ~ SITE_LOGO }}">
+        <meta name="twitter:description" content="{{ truncate(CONFIG_SITE_DESCRIPTION, 160) }}">
+        <meta name="twitter:title" content="{{ CONFIG_SITE_TITRE }}">
+        <meta name="twitter:site" content="{{ CONFIG_SITE_TWITTER }}">
+        <meta name="twitter:author" content="{{ CONFIG_SITE_TWITTER }}">
+        <meta name="twitter:domain" content="{{ CONFIG_SITE_NOM }}">
+        <meta name="twitter:image:src" content="{{ CONFIG_SITE_URL ~ CONFIG_SITE_LOGO }}">
 
     </head>
 
