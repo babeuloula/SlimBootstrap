@@ -12,12 +12,15 @@
         protected $router;
 
         public function __construct (ContainerInterface $container) {
-            if($container instanceof ContainerInterface) {
-                $this->container = $container;
-                $this->view      = $container->get('view');
-                $this->flash     = $container->get('flash');
-                $this->router    = $container->get('router');
+            if(!$container instanceof ContainerInterface) {
+                throw new \Exception("Muse be an instance of ContainerInterface");
+                
             }
+
+            $this->container = $container;
+            $this->view      = $container->get('view');
+            $this->flash     = $container->get('flash');
+            $this->router    = $container->get('router');
         }
 
         public function notFound () {
