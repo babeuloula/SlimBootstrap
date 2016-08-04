@@ -5,11 +5,7 @@
     class Config {
 
         public static function getOption($name) {
-            $name = str_replace('.', '_', $name);
-            $name = strtoupper($name);
-
-            $options = self::getOptions();
-            return $options[$name];
+            throw new \Exception('Utilisez plutôt $this->container->get(\'config\')[\'' . $name . '\'] pour récupérer la valeur');
         }
 
         public static function getOptions() {
@@ -25,16 +21,25 @@
             $options['CTRLS_PATH']  = $options['ROOT'] . $options['DS'] . 'controllers' . $options['DS'];
             $options['MODLS_PATH']  = $options['ROOT'] . $options['DS'] . 'models' . $options['DS'];
             $options['VIEWS_PATH']  = $options['ROOT'] . $options['DS'] . 'views' . $options['DS'];
-            $options['FILES_PATH']  = $options['ROOT'] . $options['DS'] . 'public' . $options['DS'] . 'files' . $options['DS'];
-            $options['IMAGES_PATH'] = $options['ROOT'] . $options['DS'] . 'public' . $options['DS'] . 'images' . $options['DS'];
-            $options['PUBLIC_URL']  = $options['URL'] . $options['BASE_URL'] . '/public/';
-            $options['PRIVATE_URL'] = $options['URL'] . $options['BASE_URL'] . '/private/';
-            $options['FILES_URL']   = $options['URL'] . $options['BASE_URL'] . '/public/files/';
-            $options['IMAGES_URL']  = $options['URL'] . $options['BASE_URL'] . '/public/images/';
+
+            $options['PUBLIC_PATH'] = $options['ROOT'] . $options['DS'] . 'public' . $options['DS'];
+            $options['FILES_PATH']  = $options['PUBLIC_PATH'] . 'files' . $options['DS'];
+            $options['IMAGES_PATH'] = $options['PUBLIC_PATH'] . 'images' . $options['DS'];
+
+            $options['PUBLIC_URL']  = $options['URL'] . $options['BASE_URL'] . '/';
+            $options['FILES_URL']   = $options['PUBLIC_URL'] . 'files/';
+            $options['IMAGES_URL']  = $options['PUBLIC_URL'] . 'images/';
+
+            foreach ($options as $key => $option) {
+                $new_key = str_replace('_', '.', $key);
+                $new_key = strtolower($new_key);
+
+                $options[$new_key] = $option;
+            }
 
             foreach($config_ini as $key => $value) {
-                $key = str_replace('.', '_', $key);
-                $key = strtoupper($key);
+                $new_key = str_replace('.', '_', $key);
+                $new_key = strtoupper($new_key);
 
                 $value = trim(trim($value, "'"), '"');
 
@@ -48,7 +53,9 @@
                     }
                 }
 
-                $options[$key] = $value;
+
+                $options[$key]     = $value;
+                $options[$new_key] = $value;
             }
             
             return $options;

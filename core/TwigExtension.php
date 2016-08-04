@@ -4,8 +4,16 @@
     namespace Core;
 
     use Cocur\Slugify\Slugify;
+    use Interop\Container\ContainerInterface;
 
     class TwigExtension extends \Slim\Views\TwigExtension {
+
+        private $container;
+
+        public function __construct ($router, $uri, ContainerInterface $container) {
+            parent::__construct($router, $uri);
+            $this->container = $container;
+        }
 
         public function getFunctions () {
             $functions = parent::getFunctions();
@@ -31,12 +39,8 @@
             }
         }
 
-        public function asset ($ressource, $cms = false) {
-            if ($cms) {
-                return Config::getOption('private_url') . 'cms/' . $ressource;
-            } else {
-                return Config::getOption('public_url') . $ressource;
-            }
+        public function asset ($ressource) {
+            return $this->container->get('config')['public.url'] . $ressource;
         }
 
         public function json_decode ($ressource) {

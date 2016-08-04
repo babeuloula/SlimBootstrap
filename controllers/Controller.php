@@ -38,15 +38,15 @@
         }
 
         public function loadModel ($name, $table = false) {
-            if (file_exists(\Core\Config::getOption('MODLS_PATH') . $name . ".php")) {
-                require_once \Core\Config::getOption('MODLS_PATH') . $name . ".php";
+            if (file_exists($this->container->get('config')['MODLS_PATH'] . $name . ".php")) {
+                require_once $this->container->get('config')['MODLS_PATH'] . $name . ".php";
             } else {
                 die('Le model <strong>' . $name . '</strong> n\'existe pas dans le dossier <strong>/models/' . $name . '</strong>.');
             }
 
             if(!isset($this->$name)) {
                 $modelName = '\Model\\' . $name;
-                $this->$name = new $modelName($table);
+                $this->$name = new $modelName($this->container, $table);
             }
         }
 

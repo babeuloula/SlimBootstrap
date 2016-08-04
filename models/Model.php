@@ -3,6 +3,7 @@
     namespace Model;
 
     use \Core\Config, \Core\Collection;
+    use Interop\Container\ContainerInterface;
 
     class Model {
 
@@ -10,9 +11,18 @@
         public $db;
         public $pdo;
         public $table = false;
+        public $container = false;
         public $lastId;
 
-        public function __construct($table = false, $sqlite = false) {
+        public function __construct(ContainerInterface $container = false,  $table = false, $sqlite = false) {
+            if (!$container instanceof ContainerInterface) {
+                $sqlite = $table;
+                $table  = $container;
+            } else {
+                $this->container = $container;
+            }
+
+
             if($this->table === false) {
                 if($table === false) {
                     $this->table = strtolower(get_class($this));
@@ -31,25 +41,25 @@
                 if($sqlite) {
                     $this->db = 'sqlite';
 
-                    $dir = \Core\Config::getOption('sqlite.path') . \Core\Config::getOption('sqlite.file');
+                    $dir = $container->get('config')['sqlite.path'] . $container->get('config')['sqlite.file'];
 
                     $pdo = new \PDO('sqlite:' . $dir);
                     $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 } else {
                     if ($_SERVER['SERVER_ADDR'] == "192.168.1.200") {
                         $config = array(
-                            'host'     => Config::getOption('local.host'),
-                            'database' => Config::getOption('local.database'),
-                            'user'     => Config::getOption('local.user'),
-                            'password' => Config::getOption('local.password'),
+                            'host'     => $container->get('config')['local.host'],
+                            'database' => $container->get('config')['local.database'],
+                            'user'     => $container->get('config')['local.user'],
+                            'password' => $container->get('config')['local.password'],
                         );
                         $this->db = 'local';
                     } else {
                         $config = array(
-                            'host'     => Config::getOption('dev.host'),
-                            'database' => Config::getOption('dev.database'),
-                            'user'     => Config::getOption('dev.user'),
-                            'password' => Config::getOption('dev.password'),
+                            'host'     => $container->get('config')['dev.host'],
+                            'database' => $container->get('config')['dev.database'],
+                            'user'     => $container->get('config')['dev.user'],
+                            'password' => $container->get('config')['dev.password'],
                         );
                         $this->db = 'dev';
                     }
@@ -62,7 +72,7 @@
                 Model::$connections[$this->db] = $pdo;
                 $this->pdo = $pdo;
             } catch (\PDOException $e) {
-                if(Config::getOption('debug') === true) {
+                if($container->get('config')['debug'] === true) {
                     die($e->getMessage());
                 } else {
                     die('Une erreur est survenue lors de la connexion &agrave; la base de donn&eacute;es');
@@ -93,11 +103,7 @@
 
                 $values = array();
                 foreach(array_values($query) as $value) {
-                    if(!is_numeric($value)) {
-                        array_push($values, $this->pdo->quote($value));
-                    } else {
-                        array_push($values, $value);
-                    }
+                    array_push($values, $this->pdo->quote($value));
                 }
                 $values = implode(', ', $values);
 
@@ -122,10 +128,7 @@
                 } else {
                     $set = array();
                     foreach($query['datas'] as $row => $value) {
-                        if(!is_numeric($value)) {
-                            $value = $this->pdo->quote($value);
-                        }
-
+                        $value = $this->pdo->quote($value);
                         array_push($set, $row . " = " . $value);
                     }
 
@@ -140,10 +143,7 @@
                     } else {
                         $conditions = array();
                         foreach($query['conditions'] as $key => $value) {
-                            if(!is_numeric($value)) {
-                                $value = $this->pdo->quote($value);
-                            }
-
+                            $value = $this->pdo->quote($value);
                             array_push($conditions, $key . " = " . $value);
                         }
 
@@ -174,10 +174,7 @@
                     } else {
                         $conditions = array();
                         foreach($query['conditions'] as $key => $value) {
-                            if(!is_numeric($value)) {
-                                $value = $this->pdo->quote($value);
-                            }
-
+                            $value = $this->pdo->quote($value);
                             array_push($conditions, $key . " = " . $value);
                         }
 
@@ -208,10 +205,7 @@
                 } else {
                     $conditions = array();
                     foreach($query['conditions'] as $key => $value) {
-                        if(!is_numeric($value)) {
-                            $value = $this->pdo->quote($value);
-                        }
-
+                        $value = $this->pdo->quote($value);
                         array_push($conditions, $key . " = " . $value);
                     }
 
