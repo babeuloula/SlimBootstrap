@@ -13,8 +13,7 @@
 
         public function __construct (ContainerInterface $container) {
             if(!$container instanceof ContainerInterface) {
-                throw new \Exception("Muse be an instance of ContainerInterface");
-                
+                throw new \Exception("Muse be an instance of ContainerInterface");                
             }
 
             $this->container = $container;

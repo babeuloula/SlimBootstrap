@@ -1,3 +1,5 @@
+# ATTENTION, le projet n'est plus maintenu. Si vous souhaitez apporter des modifications, faites des forks
+
 # Bootstrap Slim Framework 3
 
 Bootstrap pour [Slim Framework 3](http://www.slimframework.com/) afin de démarrer facilement un petit (ou gros) projet grâce à Slim Framework 3.
